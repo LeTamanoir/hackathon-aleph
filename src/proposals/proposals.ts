@@ -28,6 +28,11 @@ export const createProposal = async ({ msg, safe }: CreateProposalDto) =>
   post.Publish({
     account: safe,
     postType: "proposals",
-    content: { body: msg },
+    content: {
+      body: {
+        tx_hash:
+          "0xcaef14016d1c62d32730abe53c8117ae5e5d6179511565e79aec4b5029d3b0b8", // this is a random tx_hash from google used for sampling
+      },
+    },
     channel: proposalsChannelId(safe.address),
   });

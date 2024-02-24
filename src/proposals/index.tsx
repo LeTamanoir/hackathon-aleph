@@ -22,7 +22,8 @@ const IndexProposals = ({
         <div>
           {proposals?.map((post) => (
             <button onClick={() => onChangeProposal(post)}>
-              {JSON.stringify(post.content)}
+              {/* @ts-ignore */}
+              {post.content.body.tx_hash}
             </button>
           ))}
         </div>

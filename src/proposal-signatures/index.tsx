@@ -11,7 +11,6 @@ const IndexProposalSignatures = ({
 }) => {
   const { uploadProposalSignature, proposalSignatures, isFetching } =
     useProposalSignatures(proposal);
-
   return (
     <div>
       <button

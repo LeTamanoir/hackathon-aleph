@@ -7,9 +7,9 @@ import {
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
 
 const useProposalSignatures = (proposal: AlephMessage) => {
-  const proposalMessage: { tx_hash: string } = JSON.parse(
-    proposal.content.body
-  );
+  console.log(proposal.content.body);
+  // @ts-ignore - this is a hack to get the tx_hash from the proposal message, must type it with a proper type containing the other infos
+  const proposalMessage: { tx_hash: string } = proposal.content.body;
 
   const { data: proposalSignatures, isFetching } = useQuery({
     queryKey: ["proposalSignatures", proposal.sender, proposalMessage.tx_hash],
