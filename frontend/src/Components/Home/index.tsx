@@ -9,20 +9,20 @@ export default function Home() {
       <div className="p-20 text-center space-y-10">
         <div className="space-y-2">
           <div className="text-8xl flex-row flex m-auto w-fit space-x-4">
-            <h1 className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600 m-auto">
+            <h1 className="font-extrabold text-transparent select-none bg-clip-text bg-gradient-to-r from-blue-700 to-blue-500 m-auto">
               SAFU
             </h1>
-            <h1 className="font-extrabold text-6xl text-white m-auto">
+            <h1 className="h-16 text-transparent select-none bg-clip-text bg-gradient-to-r from-gray-100 to-gray-400 text-6xl text-white m-auto">
               {"{wallet}"}
             </h1>
           </div>
-          <p className="text-base text-light italic text-gray-400">
+          <p className="text-base text-light select-none italic text-gray-400">
             Powered by Aleph.im
           </p>
         </div>
         <div className="text-gray-300 space-y-4">
           {safe && (
-            <button className="w-fit m-auto hover:scale-110 duration-500">
+            <button className="w-fit m-auto hover:scale-110 duration-200">
               <p className="text-xl" onClick={() => setSafe(null)}>
                 Change Safe
               </p>
@@ -33,7 +33,7 @@ export default function Home() {
               Please select a safe :
             </p>
           )}
-          <div className="flex justify-center flex-col space-y-2 w-1/3 m-auto duration-500">
+          <div className="flex justify-center flex-col space-y-2 w-1/3 m-auto duration-200">
             {[
               "0x4EF0ef5aC60ae6117AF59A5ea1F90Ad2e6ce093e",
               "0x4EF0ef5aC60ae6117AF59A5ea1F90Ad2e6ce093f",
@@ -49,7 +49,7 @@ export default function Home() {
             ]
               .filter((address) => !safe || address === safe)
               .map((address) => (
-                <div className="bg-gradient-to-r from-blue-400 to-pink-600 p-3 text-slate-300  border-black outline-1 rounded-xl bg-slate-500 hover:cursor-pointer hover:bg-slate-600 hover:scale-105 duration-500">
+                <div className="bg-gradient-to-r from-blue-700 to-blue-500 p-3 text-slate-300  border-black outline-1 rounded-xl bg-slate-500 hover:cursor-pointer hover:bg-slate-600 hover:scale-105 duration-500">
                   <p
                     onClick={() => setSafe(address as `0x${string}`)}
                     className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
