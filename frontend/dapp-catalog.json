@@ -1,6 +1,8 @@
 [
   {
+    "icon": "https://dapp.local.test/kiln-logo.svg",
     "name": "Kiln",
-    "url": "https://dapp.local.test/"
+    "url": "https://dapp.local.test/",
+    "description": "Kiln Safe dApp enables Safe users to stake ETH on dedicated validators by multiple of 32 ETH."
   }
 ]

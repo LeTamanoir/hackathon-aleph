@@ -1,8 +1,3 @@
-export type Application = {
-  name: string;
-  url: string;
-};
-
 export type Transaction = {
   to: `0x${string}`;
   value: bigint;

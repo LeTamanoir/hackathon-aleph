@@ -2,7 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: Neue Machina;
+  font-style: normal;
+  src:
+    url("/fonts/neue-machina-regular.ttf") format("ttf"),
+    url("/fonts/neue-machina-regular.otf") format("opentype"),
+    url("/fonts/neue-machina-regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: Space Grotesk;
+  font-style: normal;
+  src:
+    url("/fonts/space-grotesk-regular.ttf") format("ttf"),
+    url("/fonts/space-grotesk-regular.otf") format("opentype"),
+    url("/fonts/space-grotesk-regular.woff2") format("woff2");
+}
+
+@layer base {
+  html {
+    @apply bg-darker font-space;
+  }
+
+  body {
+    @apply min-h-screen flex flex-col items-center;
+  }
+}
+
 #root {
+  width: 100%;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
