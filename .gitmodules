@@ -1,3 +1,6 @@
 [submodule "signature-script/lib/forge-std"]
 	path = signature-script/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "EthereumAlephInnovativeIntegration/lib/forge-std"]
+	path = EthereumAlephInnovativeIntegration/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
