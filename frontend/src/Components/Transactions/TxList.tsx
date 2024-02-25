@@ -196,7 +196,7 @@ export default function TxList({
     );
 
     const sortedSignatures = signatures.sort(
-      (a, b) => Number(hexToBigInt(a)) - Number(hexToBigInt(b))
+      (a, b) => Number(hexToBigInt(b)) - Number(hexToBigInt(a))
     );
 
     const tx_hash = await walletClient.writeContract({
