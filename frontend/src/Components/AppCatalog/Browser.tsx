@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Application } from "../../types/application";
 import { Methods } from "@safe-global/safe-apps-sdk";
 import { WalletClient, zeroHash } from "viem";
-import Transport from "./Transport";
-import { getSafeInfo, parseRawTransaction, signProposal } from "./safe";
+import Transport from "../../utils/transport";
+import { signProposal } from "../../utils/signer";
+import { parseRawTransaction } from "../../utils/transaction";
+import { getSafuWalletInfo } from "../../utils/walletInfo";
 import { LoadingIcon } from "../Icons";
 import useProposals from "../../Hooks/useProposals";
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
@@ -33,9 +35,7 @@ export default function Browser({
   useEffect(() => {
     const transport = new Transport(ref);
 
-    transport.on(Methods.getSafeInfo, async () => {
-      return await getSafeInfo(safuAddress);
-    });
+    transport.on(Methods.getSafeInfo, () => getSafuWalletInfo(safuAddress));
 
     transport.on(Methods.sendTransactions, async (msg) => {
       const tx = (msg.data.params as any).txs[0];

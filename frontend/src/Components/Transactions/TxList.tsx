@@ -5,8 +5,8 @@ import useSignatures from "../../Hooks/useSignatures";
 import { Proposal } from "../../types/proposal";
 import { AlephMessage } from "../../types/aleph";
 import { LoadingIcon } from "../Icons";
-import { signProposal } from "../AppCatalog/safe";
 import { useTransactionReceipt } from "wagmi";
+import { signProposal } from "../../utils/signer";
 
 function TxRow({
   message,
@@ -59,7 +59,7 @@ function TxRow({
             className="hover:underline text-sm"
             target="_blank"
             rel="noreferrer"
-            href={`http://holesky.etherscan.io/address/${proposal.submitted_tx_hash}`}
+            href={`http://holesky.etherscan.io/tx/${proposal.submitted_tx_hash}`}
           >
             {proposal.submitted_tx_hash}
           </a>
@@ -167,7 +167,6 @@ export default function TxList({
       ]),
       functionName: "execTransaction",
       account: account.address as `0x${string}`,
-      value: proposal.transaction.value,
       args: [
         proposal.transaction.to,
         proposal.transaction.value,

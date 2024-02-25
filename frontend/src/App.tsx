@@ -16,12 +16,12 @@ function App() {
 
         <Route
           path="/catalog"
-          Component={() => <AppCatalog safuAddress={safuAddress} />}
+          element={<AppCatalog safuAddress={safuAddress} />}
         />
 
         <Route
           path="/transactions"
-          Component={() => <Transactions safuAddress={safuAddress} />}
+          element={<Transactions safuAddress={safuAddress} />}
         />
       </Routes>
     </BrowserRouter>

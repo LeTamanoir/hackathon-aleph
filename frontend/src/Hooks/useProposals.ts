@@ -4,8 +4,8 @@ import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
 import { ApiServer, ID } from "../config";
 import { post, forget } from "aleph-sdk-ts/dist/messages";
 import { Proposal } from "../types/proposal";
-import { getSafeInfo } from "../Components/AppCatalog/safe";
 import { wait } from "../utils";
+import { getSafuWalletInfo } from "../utils/walletInfo";
 
 async function _getProposals({
   safuAddress,
@@ -20,7 +20,7 @@ async function _getProposals({
     })
   ).posts as AlephMessage<Proposal>[];
 
-  const { owners } = await getSafeInfo(safuAddress);
+  const { owners } = await getSafuWalletInfo(safuAddress);
 
   return proposals.filter((proposal) => {
     return owners.includes(proposal.sender);
@@ -58,7 +58,7 @@ export async function getSignatures({
     })
   ).posts as AlephMessage<Proposal>[];
 
-  const { owners } = await getSafeInfo(safuAddress);
+  const { owners } = await getSafuWalletInfo(safuAddress);
 
   return signatures.filter((signature) => {
     return owners.includes(signature.sender);

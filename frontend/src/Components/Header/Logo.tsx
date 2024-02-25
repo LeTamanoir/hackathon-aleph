@@ -10,6 +10,7 @@ export default function Logo() {
 
       <div className="flex gap-1 items-center">
         <span className="text-xs">powered by</span>
+        <AlephIcon className="size-3.5" />
         <a
           href="https://aleph.im"
           target="_blank"
@@ -18,7 +19,6 @@ export default function Logo() {
         >
           Aleph.im
         </a>
-        <AlephIcon className="size-3.5" />
       </div>
     </div>
   );
