@@ -6,13 +6,13 @@ import ConnectWallet from "../ConnectWallet";
 export default function Transactions({
   safuAddress,
 }: {
-  safuAddress: `0x${string}`;
+  safuAddress?: `0x${string}`;
 }) {
   const { data: walletClient } = useWalletClient();
 
   const { account } = useAccount();
 
-  if (!walletClient || !account) {
+  if (!walletClient || !account || !safuAddress) {
     return <ConnectWallet />;
   }
 

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlephMessage } from "../types/aleph";
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
-import { ApiServer, ID } from "../config";
+import { CHANNEL_ID } from "../config";
 import { post, forget } from "aleph-sdk-ts/dist/messages";
 import { Proposal } from "../types/proposal";
 
@@ -22,7 +22,7 @@ function forgetSignature({
   return forget.Publish({
     account,
     hashes: [message.item_hash],
-    channel: `${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`,
+    channel: `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposal/${proposal.tx_hash}`,
   });
 }
 
@@ -35,9 +35,10 @@ export async function getSignatures({
 }): Promise<AlephMessage<Proposal>[]> {
   const signatures = (
     await post.Get({
-      channels: [`${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`],
+      channels: [
+        `${CHANNEL_ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`,
+      ],
       types: "signature",
-      APIServer: ApiServer,
     })
   ).posts as AlephMessage<Proposal>[];
 

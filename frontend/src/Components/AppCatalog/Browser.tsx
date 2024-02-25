@@ -17,11 +17,13 @@ export default function Browser({
   walletClient,
   account,
   app,
+  onBack,
 }: {
   safuAddress: `0x${string}`;
   walletClient: WalletClient;
   account: ETHAccount;
   app: Application;
+  onBack: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const ref = useRef<HTMLIFrameElement>(null);
@@ -85,6 +87,13 @@ export default function Browser({
 
   return (
     <div className="w-full flex grow p-2 bg-dark relative">
+      <button
+        onClick={onBack}
+        className="absolute top-1/2 w-20 p-2 -left-16 text-white border-darker border-l-0 bg-dark-light border rounded-r transition-transform hover:translate-x-16"
+      >
+        back
+      </button>
+
       {isLoading && (
         <div className="w-full grow flex gap-4 text-white items-center justify-center">
           <LoadingIcon className="size-7" />
