@@ -15,27 +15,27 @@ export default function ConnectWallet({
     return <Outlet />;
   }
 
-  if (safuAddress === "none") {
+  if (!address) {
     return (
-      <div className="flex flex-col grow items-center gap-20 justify-center">
+      <div className="flex flex-col grow items-center gap-5 justify-center">
+        <button
+          className="text-xl bg-blue-600 rounded-lg p-3 hover:bg-blue-700 transition-colors"
+          onClick={() => connect({ connector: injected() })}
+        >
+          Connect Wallet
+        </button>
+
         <p className="text-white font-xl">
-          You need to select a SAFU {"{wallet}"} to use this app.
+          You need to connect your wallet to use this app.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col grow items-center gap-5 justify-center">
-      <button
-        className="text-xl bg-blue-600 rounded-lg p-3 hover:bg-blue-700 transition-colors"
-        onClick={() => connect({ connector: injected() })}
-      >
-        Connect Wallet
-      </button>
-
+    <div className="flex flex-col grow items-center gap-20 justify-center">
       <p className="text-white font-xl">
-        You need to connect your wallet to use this app.
+        You need to select a SAFU {"{wallet}"} to use this app.
       </p>
     </div>
   );
