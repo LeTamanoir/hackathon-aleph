@@ -15,8 +15,8 @@ export default function Navbar({
   selectedSafu,
   setSelectedSafu,
 }: {
-  selectedSafu: `0x${string}` | undefined;
-  setSelectedSafu: (w: `0x${string}` | undefined) => void;
+  selectedSafu: string;
+  setSelectedSafu: (w: string) => void;
 }) {
   const { account, availableSafuWallets } = useAccount();
   const { disconnect } = useDisconnect();
@@ -70,11 +70,8 @@ export default function Navbar({
         </div>
         <select
           className="px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
-          value={selectedSafu ?? "none"}
-          onChange={(e) =>
-            e.target.value !== "none" &&
-            setSelectedSafu(e.target.value as `0x${string}`)
-          }
+          value={selectedSafu}
+          onChange={(e) => setSelectedSafu(e.target.value)}
         >
           <option value="none">Select a SAFU</option>
           {availableSafuWallets?.map((safu) => (

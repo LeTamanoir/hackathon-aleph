@@ -8,8 +8,8 @@ import Footer from "./Components/Footer";
 import ConnectWallet from "./Components/ConnectWallet";
 
 function App() {
-  const [selectedSafu, setSelectedSafu] = useState<`0x${string}` | undefined>(
-    () => (localStorage.getItem("selectedSafu") as `0x${string}`) ?? undefined
+  const [selectedSafu, setSelectedSafu] = useState(
+    () => localStorage.getItem("selectedSafu") ?? "none"
   );
 
   useEffect(() => {
@@ -23,15 +23,26 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route Component={() => <ConnectWallet safuAddress={selectedSafu} />}>
+        <Route
+          Component={() => (
+            <ConnectWallet
+              onSetSafuAddress={setSelectedSafu}
+              safuAddress={selectedSafu}
+            />
+          )}
+        >
           <Route
             path="/catalog"
-            Component={() => <AppCatalog safuAddress={selectedSafu!} />}
+            Component={() => (
+              <AppCatalog safuAddress={selectedSafu as `0x${string}`} />
+            )}
           />
 
           <Route
             path="/transactions"
-            Component={() => <Transactions safuAddress={selectedSafu!} />}
+            Component={() => (
+              <Transactions safuAddress={selectedSafu as `0x${string}`} />
+            )}
           />
         </Route>
       </Routes>
