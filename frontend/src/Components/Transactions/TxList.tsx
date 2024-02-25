@@ -1,12 +1,5 @@
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
-import {
-  WalletClient,
-  bytesToBigInt,
-  concat,
-  formatEther,
-  hexToBigInt,
-  parseAbi,
-} from "viem";
+import { WalletClient, concat, formatEther, hexToBigInt, parseAbi } from "viem";
 import useProposals, { getSignatures } from "../../Hooks/useProposals";
 import useSignatures from "../../Hooks/useSignatures";
 import { Proposal } from "../../types/proposal";
