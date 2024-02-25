@@ -46,8 +46,9 @@ function TxRow({
   const signatureFromUser = signatures?.find(
     (s) => s.sender === account.address
   );
-
   const signedTxCount = signatures?.length;
+  const canExecTx =
+    signedTxCount && safuInfo?.threshold && signedTxCount >= safuInfo.threshold;
 
   function onDeleteSignature() {
     if (!signatureFromUser) return;
@@ -112,7 +113,7 @@ function TxRow({
           <div className="flex gap-2 items-center">
             {hasAlreadySigned ? (
               <>
-                {signedTxCount === safuInfo?.threshold && (
+                {canExecTx && (
                   <button
                     className="px-2 py-1 text-white rounded-lg bg-blue-700 hover:bg-blue-800 transition-colors"
                     onClick={onExec}
