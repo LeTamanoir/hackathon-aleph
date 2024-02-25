@@ -3,7 +3,7 @@ import AlephIcon from "../Header/AlephIcon";
 export default function Home() {
   return (
     <div
-      className="width-full flex flex-col gap-10 items-center justify-center"
+      className="width-full flex flex-col gap-20 py-20 items-center justify-center"
       id="home-page"
     >
       <div className="flex flex-col gap-2">
@@ -22,19 +22,46 @@ export default function Home() {
         </div>
       </div>
 
-      <p className="text-white max-w-lg">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus
-        harum inventore omnis voluptatem iste nemo rem? Nam corporis, neque
-        praesentium quisquam accusantium, numquam autem quis doloremque corrupti
-        alias ducimus nulla blanditiis. Quibusdam quos sapiente ex aliquid odit
-        vero vitae dolorum, facilis, officiis iusto commodi itaque, possimus
-        amet quae corrupti doloribus dolor a. Nihil fugiat beatae dolore quis
-        nesciunt odit earum dignissimos officiis velit id eligendi quidem quod,
-        adipisci expedita obcaecati? Animi sunt ipsam ab alias, doloremque
-        reprehenderit harum qui cum repellat itaque. Ipsum quod autem animi
-        labore natus sint consectetur quia aliquam minus expedita, cumque
-        impedit, quisquam eveniet blanditiis officia!
-      </p>
+      <section className="max-w-lg">
+        <h2 className="font-extrabold text-2xl text-[#0C79FD] mb-4">
+          Welcome to Safu {"{Wallet}"}
+        </h2>
+        <p className="text-white">
+          Experience the future of digital asset security with Safu {"{Wallet}"}
+          , your gateway to cutting-edge, fully decentralized asset management.
+          Our unique multi-signature wallet, powered by Aleph's innovative
+          on-chain technology, sets a new standard in security and transparency,
+          eliminating the need for centralized data storage and offering you
+          unparalleled peace of mind.
+        </p>
+      </section>
+
+      <section className="max-w-lg">
+        <h2 className="font-extrabold text-2xl text-[#0C79FD] mb-4">
+          The Safu Edge
+        </h2>
+        <p className="text-white">
+          Safu {"{wallet}"} redefines your digital asset experience, blending
+          top-tier security with user-friendly design. Embrace the confidence of
+          managing your assets with our robust multi-signature approach,
+          ensuring your investments are safe and distributed, catering to
+          individuals, businesses, and institutions alike in the dynamic crypto
+          landscape.
+        </p>
+      </section>
+
+      <section className="max-w-lg">
+        <h2 className="font-extrabold text-2xl text-[#0C79FD] mb-4">
+          Empowered by Aleph
+        </h2>
+        <p className="text-white">
+          At Safu {"{wallet}"}'s core is Aleph's revolutionary platform,
+          enabling secure, transparent on-chain data handling. This integration
+          fortifies our wallet's security and underlines our dedication to
+          decentralization, providing you with an empowered, seamless asset
+          management experience without sacrificing convenience or control.
+        </p>
+      </section>
     </div>
   );
 }
