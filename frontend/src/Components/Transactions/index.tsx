@@ -1,22 +1,14 @@
 import { useWalletClient } from "wagmi";
 import useAccount from "../../Hooks/useAccount";
 import TxList from "./TxList";
-import ConnectWallet from "../ConnectWallet";
 
 export default function Transactions({
   safuAddress,
 }: {
-  safuAddress?: `0x${string}`;
+  safuAddress: `0x${string}`;
 }) {
   const { data: walletClient } = useWalletClient();
-
   const { account } = useAccount();
-
-  console.log("walletClient", walletClient,safuAddress);
-
-  if (!walletClient || !account || !safuAddress) {
-    return <ConnectWallet />;
-  }
 
   return (
     <div className="flex grow flex-col gap-10 my-10 px-28">

@@ -5,6 +5,7 @@ import Transactions from "./Components/Transactions";
 import Home from "./Components/Home";
 import { useEffect, useState } from "react";
 import Footer from "./Components/Footer";
+import ConnectWallet from "./Components/ConnectWallet";
 
 function App() {
   const [selectedSafu, setSelectedSafu] = useState<`0x${string}` | undefined>(
@@ -22,15 +23,17 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route
-          path="/catalog"
-          Component={() => <AppCatalog safuAddress={selectedSafu} />}
-        />
+        <Route Component={() => <ConnectWallet safuAddress={selectedSafu} />}>
+          <Route
+            path="/catalog"
+            Component={() => <AppCatalog safuAddress={selectedSafu!} />}
+          />
 
-        <Route
-          path="/transactions"
-          Component={() => <Transactions safuAddress={selectedSafu} />}
-        />
+          <Route
+            path="/transactions"
+            Component={() => <Transactions safuAddress={selectedSafu!} />}
+          />
+        </Route>
       </Routes>
 
       <Footer />

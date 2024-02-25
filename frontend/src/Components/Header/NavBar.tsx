@@ -46,12 +46,14 @@ export default function Navbar({
       </nav>
 
       <div className="relative ml-6">
-        <span className="text-xs absolute top-[-60%] left-0 text-gray-300">{config.chains[0].name}</span>
+        <span className="text-xs absolute top-[-60%] left-0 text-gray-300">
+          {config.chains[0].name}
+        </span>
         <select
           className="px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
           value={selectedSafu ?? "none"}
           onChange={(e) =>
-            e.target.value !== "nonce" &&
+            e.target.value !== "none" &&
             setSelectedSafu(e.target.value as `0x${string}`)
           }
         >

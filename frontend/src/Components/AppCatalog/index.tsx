@@ -4,22 +4,15 @@ import { Application } from "../../types/application";
 import Browser from "./Browser";
 import { useWalletClient } from "wagmi";
 import useAccount from "../../Hooks/useAccount";
-import ConnectWallet from "../ConnectWallet";
 
 export default function AppCatalog({
   safuAddress,
 }: {
-  safuAddress?: `0x${string}`;
+  safuAddress: `0x${string}`;
 }) {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
-
   const { data: walletClient } = useWalletClient();
-
   const { account } = useAccount();
-
-  if (!walletClient || !account || !safuAddress) {
-    return <ConnectWallet />;
-  }
 
   if (selectedApp && walletClient && account) {
     return (

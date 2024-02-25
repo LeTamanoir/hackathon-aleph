@@ -53,6 +53,7 @@ export default function useAccount() {
         nativeCurrency: config.chains[0].nativeCurrency,
         rpcUrls: [config.chains[0].rpcUrls.default.http[0]],
       }),
+    enabled: !!execAccount,
   });
 
   const { data: availableSafuWallets } = useQuery({
