@@ -232,7 +232,7 @@ export default function TxList({
   return (
     <div className="flex flex-col gap-6">
       {proposals === undefined ? (
-        <div className="flex items-center gap-3 text-lg text-gray-500">
+        <div className="flex items-center gap-3 text-lg text-gray-200">
           <LoadingIcon className="size-5" />
           Loading proposals
         </div>

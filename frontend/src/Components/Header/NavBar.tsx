@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import useAccount from "../../Hooks/useAccount";
 import { config } from "../../wagmi";
+import { LogoutIcon } from "../Icons";
+import { useDisconnect } from "wagmi";
 
 const LINKS = [
   { name: "Home", href: "/" },
@@ -16,7 +18,8 @@ export default function Navbar({
   selectedSafu: `0x${string}` | undefined;
   setSelectedSafu: (w: `0x${string}` | undefined) => void;
 }) {
-  const { availableSafuWallets } = useAccount();
+  const { account, availableSafuWallets } = useAccount();
+  const { disconnect } = useDisconnect();
 
   return (
     <header
@@ -46,9 +49,25 @@ export default function Navbar({
       </nav>
 
       <div className="relative ml-6">
-        <span className="text-xs absolute top-[-60%] left-0 text-gray-300">
-          {config.chains[0].name}
-        </span>
+        <div className="flex absolute items-center top-[-60%] text-gray-300 left-0 right-0">
+          <span className="text-xs">{config.chains[0].name}</span>
+          {account && (
+            <>
+              <a
+                className="hover:underline ml-auto text-xs"
+                target="_blank"
+                rel="noreferrer"
+                href={`${config.chains[0].blockExplorers.default.url}/address/${account.address}`}
+              >
+                {account.address.substring(0, 6)}...
+                {account.address.substring(account.address.length - 4)}
+              </a>
+              <button onClick={() => disconnect()}>
+                <LogoutIcon className="size-3.5 ml-1" />
+              </button>
+            </>
+          )}
+        </div>
         <select
           className="px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
           value={selectedSafu ?? "none"}
