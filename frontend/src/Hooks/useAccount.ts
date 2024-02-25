@@ -1,12 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GetAccountFromProvider } from "aleph-sdk-ts/dist/accounts/ethereum";
 import { useAccount as useWagmiAccount } from "wagmi";
 import { config } from "../wagmi";
 import { getPublicClient } from "wagmi/actions";
 import { isAddressEqual, parseAbi } from "viem";
 import { SAFU_PROXY_ADDRESS } from "../config";
-import { EthersAdapter, SafeFactory } from "@safe-global/protocol-kit";
-import { wait } from "../utils";
 
 const publicClient = getPublicClient(config);
 
@@ -42,47 +40,8 @@ async function getDeployments(execAddress: `0x${string}`) {
   });
 }
 
-async function _deploySafuWallet({
-  owners,
-  threshold,
-}: {
-  owners: string;
-  threshold: number;
-}) {
-  const { ethers } = await import("ethers");
-
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  const signer = await provider.getSigner();
-
-  const ethAdapter = new EthersAdapter({
-    ethers,
-    signerOrProvider: signer,
-  });
-
-  const factory = await SafeFactory.create({
-    ethAdapter,
-    // @ts-ignore
-    contractNetworks: {
-      [config.chains[0].id.toString()]: {
-        safeProxyFactoryAddress: SAFU_PROXY_ADDRESS,
-      },
-    },
-  });
-
-  const safuWallet = await factory.deploySafe({
-    safeAccountConfig: {
-      owners: owners.split(",").map((e) => e.trim().slice(2)),
-      threshold,
-    },
-  });
-
-  return safuWallet;
-}
-
 export default function useAccount() {
   const { address: execAccount } = useWagmiAccount();
-
-  const queryClient = useQueryClient();
 
   const { data: account } = useQuery({
     queryKey: ["GetAccountFromProvider", execAccount],
@@ -103,24 +62,5 @@ export default function useAccount() {
     enabled: !!execAccount,
   });
 
-  const {
-    mutateAsync: deploySafuWallet,
-    isPending: isSafuWalletDeployPending,
-  } = useMutation({
-    mutationFn: (body: { owners: string; threshold: number }) =>
-      _deploySafuWallet(body),
-    onSuccess: async () => {
-      await wait(500);
-      queryClient.invalidateQueries({
-        queryKey: ["GetDeployments", execAccount],
-      });
-    },
-  });
-
-  return {
-    account,
-    availableSafuWallets,
-    deploySafuWallet,
-    isSafuWalletDeployPending,
-  };
+  return { account, availableSafuWallets };
 }

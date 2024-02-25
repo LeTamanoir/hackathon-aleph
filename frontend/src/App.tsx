@@ -23,14 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route
-          Component={() => (
-            <ConnectWallet
-              onSetSafuAddress={setSelectedSafu}
-              safuAddress={selectedSafu}
-            />
-          )}
-        >
+        <Route Component={() => <ConnectWallet safuAddress={selectedSafu} />}>
           <Route
             path="/catalog"
             Component={() => (
