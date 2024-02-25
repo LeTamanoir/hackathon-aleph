@@ -1,12 +1,21 @@
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
-import { WalletClient, concat, formatEther, parseAbi } from "viem";
+import {
+  WalletClient,
+  bytesToBigInt,
+  concat,
+  formatEther,
+  hexToBigInt,
+  parseAbi,
+} from "viem";
 import useProposals, { getSignatures } from "../../Hooks/useProposals";
 import useSignatures from "../../Hooks/useSignatures";
 import { Proposal } from "../../types/proposal";
 import { AlephMessage } from "../../types/aleph";
 import { LoadingIcon } from "../Icons";
-import { signProposal } from "../AppCatalog/safe";
 import { useTransactionReceipt } from "wagmi";
+import { signProposal } from "../../utils/signer";
+import { useQuery } from "@tanstack/react-query";
+import { getSafuWalletInfo } from "../../utils/walletInfo";
 
 function TxRow({
   message,
@@ -25,6 +34,11 @@ function TxRow({
 }) {
   const proposal = message.content.body;
 
+  const { data: safuInfo } = useQuery({
+    queryKey: ["getSafuWalletInfo", safuAddress],
+    queryFn: () => getSafuWalletInfo(safuAddress),
+  });
+
   const { signatures, deleteSignature } = useSignatures({
     proposal,
     safuAddress,
@@ -35,11 +49,17 @@ function TxRow({
   const hasAlreadySigned = signatures?.some(
     (s) => s.sender === account.address
   );
+  const signatureFromUser = signatures?.find(
+    (s) => s.sender === account.address
+  );
+
+  const signedTxCount = signatures?.length;
 
   function onDeleteSignature() {
+    if (!signatureFromUser) return;
     deleteSignature({
       account,
-      message: signatures?.at(-1)!,
+      message: signatureFromUser,
       safuAddress,
     });
   }
@@ -59,7 +79,7 @@ function TxRow({
             className="hover:underline text-sm"
             target="_blank"
             rel="noreferrer"
-            href={`http://holesky.etherscan.io/address/${proposal.submitted_tx_hash}`}
+            href={`http://holesky.etherscan.io/tx/${proposal.submitted_tx_hash}`}
           >
             {proposal.submitted_tx_hash}
           </a>
@@ -92,15 +112,21 @@ function TxRow({
       </div>
 
       {!isTxSubmitted && (
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {hasAlreadySigned ? (
             <>
-              <button
-                className="px-1.5 py-0.5 text-sm text-white rounded-lg bg-blue-700 hover:bg-blue-800 transition-colors"
-                onClick={onExec}
-              >
-                Exec
-              </button>
+              {signedTxCount === safuInfo?.threshold && (
+                <button
+                  className="px-2 py-1 text-white rounded-lg bg-blue-700 hover:bg-blue-800 transition-colors"
+                  onClick={onExec}
+                >
+                  Exec
+                </button>
+              )}
+              <div className="text-xs">
+                {signedTxCount} / {safuInfo?.threshold} signatures
+              </div>
+
               <button
                 className="px-1.5 py-0.5 text-sm ml-auto border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
                 onClick={onDeleteSignature}
@@ -109,12 +135,17 @@ function TxRow({
               </button>
             </>
           ) : (
-            <button
-              className="px-1.5 py-0.5 text-sm ml-auto border text-white border-black rounded-lg bg-dark-light"
-              onClick={onSign}
-            >
-              Sign
-            </button>
+            <>
+              <button
+                className="px-2 py-1 text-white rounded-lg bg-dark-light hover:bg-dark/90 transition-colors"
+                onClick={onSign}
+              >
+                Sign
+              </button>
+              <div className="text-xs mr-auto">
+                {signedTxCount} / {safuInfo?.threshold} signatures
+              </div>
+            </>
           )}
 
           <button
@@ -159,7 +190,13 @@ export default function TxList({
   async function onExecTransaction(message: AlephMessage<Proposal>) {
     const proposal = message.content.body;
 
-    const signatures = await getSignatures({ proposal, safuAddress });
+    const signatures = (await getSignatures({ proposal, safuAddress })).map(
+      (e) => e.content.body
+    );
+
+    const sortedSignatures = signatures.sort(
+      (a, b) => Number(hexToBigInt(a)) - Number(hexToBigInt(b))
+    );
 
     const tx_hash = await walletClient.writeContract({
       abi: parseAbi([
@@ -167,7 +204,6 @@ export default function TxList({
       ]),
       functionName: "execTransaction",
       account: account.address as `0x${string}`,
-      value: proposal.transaction.value,
       args: [
         proposal.transaction.to,
         proposal.transaction.value,
@@ -178,9 +214,7 @@ export default function TxList({
         proposal.transaction.gasPrice,
         proposal.transaction.gasToken,
         proposal.transaction.refundReceiver,
-        concat(
-          signatures.map((e) => e.content.body as unknown as `0x${string}`)
-        ),
+        concat(sortedSignatures),
       ],
       address: safuAddress,
       chain: walletClient.chain,

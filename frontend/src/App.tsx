@@ -2,27 +2,38 @@ import AppCatalog from "./Components/AppCatalog";
 import Navbar from "./Components/Header/NavBar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Transactions from "./Components/Transactions";
+import Home from "./Components/Home";
+import { useEffect, useState } from "react";
+import Footer from "./Components/Footer";
 
 function App() {
-  const safuAddress = "0xA7a5575BC169d9E96aF32DdE565fa7e9E2e1d171";
+  const [selectedSafu, setSelectedSafu] = useState<`0x${string}` | undefined>(
+    () => (localStorage.getItem("selectedSafu") as `0x${string}`) ?? undefined
+  );
+
+  useEffect(() => {
+    if (selectedSafu) localStorage.setItem("selectedSafu", selectedSafu);
+  }, [selectedSafu]);
 
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar selectedSafu={selectedSafu} setSelectedSafu={setSelectedSafu} />
 
       <Routes>
-        <Route path="/" element={<div>Home</div>} />
+        <Route path="/" element={<Home />} />
 
         <Route
           path="/catalog"
-          Component={() => <AppCatalog safuAddress={safuAddress} />}
+          element={<AppCatalog safuAddress={selectedSafu} />}
         />
 
         <Route
           path="/transactions"
-          Component={() => <Transactions safuAddress={safuAddress} />}
+          element={<Transactions safuAddress={selectedSafu} />}
         />
       </Routes>
+
+      <Footer />
     </BrowserRouter>
   );
 }

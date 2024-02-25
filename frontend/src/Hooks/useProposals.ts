@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlephMessage } from "../types/aleph";
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
-import { ApiServer, ID } from "../config";
+import { CHANNEL_ID } from "../config";
 import { post, forget } from "aleph-sdk-ts/dist/messages";
 import { Proposal } from "../types/proposal";
-import { getSafeInfo } from "../Components/AppCatalog/safe";
 import { wait } from "../utils";
+import { getSafuWalletInfo } from "../utils/walletInfo";
+import { isAddressEqual } from "viem";
 
 async function _getProposals({
   safuAddress,
@@ -14,16 +15,19 @@ async function _getProposals({
 }): Promise<AlephMessage<Proposal>[]> {
   const proposals = (
     await post.Get({
-      channels: [`${ID}/multisig/${safuAddress}/proposals`],
+      channels: [
+        `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposals`,
+      ],
       types: "proposal",
-      APIServer: ApiServer,
     })
   ).posts as AlephMessage<Proposal>[];
 
-  const { owners } = await getSafeInfo(safuAddress);
+  const { owners } = await getSafuWalletInfo(safuAddress);
 
   return proposals.filter((proposal) => {
-    return owners.includes(proposal.sender);
+    return !!owners.find((e) =>
+      isAddressEqual(e as `0x${string}`, proposal.sender as `0x${string}`)
+    );
   });
 }
 
@@ -39,7 +43,7 @@ function _deleteProposal({
   return forget.Publish({
     account,
     hashes: [message.item_hash],
-    channel: `${ID}/multisig/${safuAddress}/proposals`,
+    channel: `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposals`,
   });
 }
 
@@ -49,19 +53,22 @@ export async function getSignatures({
 }: {
   proposal: Proposal;
   safuAddress: `0x${string}`;
-}): Promise<AlephMessage<Proposal>[]> {
+}): Promise<AlephMessage<`0x${string}`>[]> {
   const signatures = (
     await post.Get({
-      channels: [`${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`],
+      channels: [
+        `${CHANNEL_ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`,
+      ],
       types: "signature",
-      APIServer: ApiServer,
     })
-  ).posts as AlephMessage<Proposal>[];
+  ).posts as AlephMessage<`0x${string}`>[];
 
-  const { owners } = await getSafeInfo(safuAddress);
+  const { owners } = await getSafuWalletInfo(safuAddress);
 
   return signatures.filter((signature) => {
-    return owners.includes(signature.sender);
+    return !!owners.find((e) =>
+      isAddressEqual(e as `0x${string}`, signature.sender as `0x${string}`)
+    );
   });
 }
 
@@ -81,7 +88,7 @@ function _updateProposal({
     postType: "amend",
     ref: message.item_hash,
     content: { body: proposal },
-    channel: `${ID}/multisig/${safuAddress}/proposals`,
+    channel: `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposals`,
   });
 }
 
@@ -98,7 +105,7 @@ function _createProposal({
     account,
     postType: "proposal",
     content: { body: proposal },
-    channel: `${ID}/multisig/${safuAddress}/proposals`,
+    channel: `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposals`,
   });
 }
 
@@ -117,7 +124,7 @@ function _createSignature({
     account,
     postType: "signature",
     content: { body: signature },
-    channel: `${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`,
+    channel: `${CHANNEL_ID}/multisig/${safuAddress.toLowerCase()}/proposal/${proposal.tx_hash}`,
   });
 }
 
