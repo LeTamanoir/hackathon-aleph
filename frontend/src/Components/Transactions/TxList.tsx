@@ -145,12 +145,14 @@ function TxRow({
               </>
             )}
 
-            <button
-              className="px-1.5 py-0.5 flex gap-1 items-center text-sm border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
-              onClick={onDelete}
-            >
-              <BinIcon className="size-4" /> delete proposal
-            </button>
+            {message.sender === account.address && (
+              <button
+                className="px-1.5 py-0.5 flex gap-1 items-center text-sm border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
+                onClick={onDelete}
+              >
+                <BinIcon className="size-4" /> delete proposal
+              </button>
+            )}
           </div>
         </>
       )}
