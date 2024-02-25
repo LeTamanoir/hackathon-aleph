@@ -1,12 +1,12 @@
 import { http, createConfig } from "wagmi";
-import { holesky } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
 export const config = createConfig({
-  chains: [holesky],
+  chains: [sepolia],
   connectors: [injected()],
   transports: {
-    [holesky.id]: http(),
+    [sepolia.id]: http(),
   },
 });
 

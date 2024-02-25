@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetAccountFromProvider } from "aleph-sdk-ts/dist/accounts/ethereum";
-import { holesky } from "viem/chains";
 import { useAccount as useWagmiAccount } from "wagmi";
 import { config } from "../wagmi";
 import { getPublicClient } from "wagmi/actions";
@@ -40,6 +39,7 @@ async function getDeployments(execAddress: `0x${string}`) {
     return !!owners[idx].find((e) => isAddressEqual(e, execAddress));
   });
 }
+
 export default function useAccount() {
   const { address: execAccount } = useWagmiAccount();
 
@@ -47,11 +47,11 @@ export default function useAccount() {
     queryKey: ["GetAccountFromProvider", execAccount],
     queryFn: () =>
       GetAccountFromProvider(window.ethereum, {
-        chainId: holesky.id.toString(),
-        blockExplorerUrls: [holesky.blockExplorers.default.url],
-        chainName: holesky.name,
-        nativeCurrency: holesky.nativeCurrency,
-        rpcUrls: [holesky.rpcUrls.default.http[0]],
+        chainId: config.chains[0].id.toString(),
+        blockExplorerUrls: [config.chains[0].blockExplorers.default.url],
+        chainName: config.chains[0].name,
+        nativeCurrency: config.chains[0].nativeCurrency,
+        rpcUrls: [config.chains[0].rpcUrls.default.http[0]],
       }),
   });
 

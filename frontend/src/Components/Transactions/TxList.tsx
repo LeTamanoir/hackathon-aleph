@@ -9,6 +9,7 @@ import { useTransactionReceipt } from "wagmi";
 import { signProposal } from "../../utils/signer";
 import { useQuery } from "@tanstack/react-query";
 import { getSafuWalletInfo } from "../../utils/walletInfo";
+import { config } from "../../wagmi";
 
 function TxRow({
   message,
@@ -72,7 +73,7 @@ function TxRow({
             className="hover:underline text-sm"
             target="_blank"
             rel="noreferrer"
-            href={`http://holesky.etherscan.io/tx/${proposal.submitted_tx_hash}`}
+            href={`${config.chains[0].blockExplorers.default.url}/tx/${proposal.submitted_tx_hash}`}
           >
             {proposal.submitted_tx_hash}
           </a>
@@ -94,7 +95,7 @@ function TxRow({
             className="hover:underline"
             target="_blank"
             rel="noreferrer"
-            href={`http://holesky.etherscan.io/address/${proposal.transaction.to}`}
+            href={`${config.chains[0].blockExplorers.default.url}/address/${proposal.transaction.to}`}
           >
             {proposal.transaction.to}
           </a>

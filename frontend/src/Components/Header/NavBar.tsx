@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 import useAccount from "../../Hooks/useAccount";
+import { config } from "../../wagmi";
 
 const LINKS = [
   { name: "Home", href: "/" },
@@ -44,21 +45,24 @@ export default function Navbar({
         ))}
       </nav>
 
-      <select
-        className="ml-6 px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
-        value={selectedSafu ?? "none"}
-        onChange={(e) =>
-          e.target.value !== "nonce" &&
-          setSelectedSafu(e.target.value as `0x${string}`)
-        }
-      >
-        <option value="none">Select a SAFU</option>
-        {availableSafuWallets?.map((safu) => (
-          <option key={safu} value={safu}>
-            {safu}
-          </option>
-        ))}
-      </select>
+      <div className="relative ml-6">
+        <span className="text-xs absolute top-[-60%] left-0 text-gray-300">{config.chains[0].name}</span>
+        <select
+          className="px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
+          value={selectedSafu ?? "none"}
+          onChange={(e) =>
+            e.target.value !== "nonce" &&
+            setSelectedSafu(e.target.value as `0x${string}`)
+          }
+        >
+          <option value="none">Select a SAFU</option>
+          {availableSafuWallets?.map((safu) => (
+            <option key={safu} value={safu}>
+              {safu.substring(0, 6)}...{safu.substring(safu.length - 4)}
+            </option>
+          ))}
+        </select>
+      </div>
     </header>
   );
 }

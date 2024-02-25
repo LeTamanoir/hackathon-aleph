@@ -1,17 +1,5 @@
 [
   {
-    "icon": "https://dapp.local.test/kiln-logo.svg",
-    "name": "Kiln",
-    "url": "https://dapp.local.test/",
-    "description": "Kiln Safe dApp enables Safe users to stake ETH on dedicated validators by multiple of 32 ETH."
-  },
-  {
-    "icon": "https://stake-holesky.testnet.fi/favicon.ico",
-    "name": "Lido",
-    "url": "https://stake-holesky.testnet.fi/",
-    "description": "Stake ETH and receive stETH while staking."
-  },
-  {
     "icon": "https://aleph.im/apple-touch-icon.png",
     "name": "ETH-Aleph dApp",
     "description": "Send data from Ethereum to Aleph.im.",
