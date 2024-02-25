@@ -2,20 +2,20 @@
 
 ## What is SAFU {wallet}
 
-SAFU {wallet} is the first fully decentralized multisig, powered by [aleph.im](https://aleph.im/). It use the aleph network to store signature approvals off-chain by keeping it in a decentralised storage. It use a deterministic way to store proposals and signatures, so anyone can build it's own UI to interface with SAFU {wallet}.
+SAFU {wallet} is the first fully decentralized multisig, powered by [aleph.im](https://aleph.im/). It uses the aleph network to store signature approvals off-chain by keeping it in a decentralised storage. It uses a deterministic way to store proposals and signatures, so anyone can build their own UI to interface with SAFU {wallet}.
 
 ## Artchitechture of our protocol on top of Aleph
 
-We are working with 3 rescources:
+We are working with 3 ressources:
 - multi-sig: address of the multi-sig contract on ethereum
 - proposal: hash of the Tx proposed to the owners of the multi-sig
 - signature: signatures mandatory to execute the proposed transactions, the minimum required depends on the treshold configured in the multi-sig contract.
 
-and we can access different rescources by following the defined format for channels:
+and we can access different ressources by following the defined format for channels:
 - proposals: `${APP_ID}/multisig/${MULTI_SIG_ADDR}/proposals`
 - signatures: `${APP_ID}/multisig/${MULTI_SIG_ADDR}/proposal/${PROPOSAL_TX_HASH}`
 
-This usage of Aleph's channels helps us to easily find the needed rescources without the need of any backend in a fully decentralized way.
+This usage of Aleph's channels helps us to easily find the needed ressources without the need of any backend in a fully decentralized way.
 
 ![alt text](./assets/image.png)
 
