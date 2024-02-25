@@ -9,7 +9,7 @@ import ConnectWallet from "../ConnectWallet";
 export default function AppCatalog({
   safuAddress,
 }: {
-  safuAddress: `0x${string}`;
+  safuAddress?: `0x${string}`;
 }) {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
@@ -17,13 +17,14 @@ export default function AppCatalog({
 
   const { account } = useAccount();
 
-  if (!walletClient || !account) {
+  if (!walletClient || !account || !safuAddress) {
     return <ConnectWallet />;
   }
 
   if (selectedApp && walletClient && account) {
     return (
       <Browser
+        onBack={() => setSelectedApp(null)}
         account={account}
         safuAddress={safuAddress}
         walletClient={walletClient}
@@ -42,7 +43,7 @@ export default function AppCatalog({
         </p>
       </header>
 
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-3 gap-6">
         {applications.map((app, idx) => {
           return (
             <button

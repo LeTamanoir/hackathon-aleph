@@ -4,5 +4,17 @@
     "name": "Kiln",
     "url": "https://dapp.local.test/",
     "description": "Kiln Safe dApp enables Safe users to stake ETH on dedicated validators by multiple of 32 ETH."
+  },
+  {
+    "icon": "https://app.uniswap.org/favicon.png",
+    "name": "Uniswap",
+    "url": "https://app.uniswap.org/",
+    "description": "Swap, earn, and build on the leading decentralized crypto trading protocol."
+  },
+  {
+    "icon": "https://stake-holesky.testnet.fi/favicon.ico",
+    "name": "Lido",
+    "url": "https://stake-holesky.testnet.fi/",
+    "description": "Stake ETH and receive stETH while staking."
   }
 ]
