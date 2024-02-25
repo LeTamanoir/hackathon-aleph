@@ -17,7 +17,7 @@ and we can access different ressources by following the defined format for chann
 
 This usage of Aleph's channels helps us to easily find the needed ressources without the need of any backend in a fully decentralized way.
 
-![alt text](./assets/image.png)
+![alt text](./assets/app-aleph-channels.png)
 
 ## Welcome contributions
 We are deeply committed to open source, valuing the collaborative spirit and innovation it fosters. We warmly welcome contributions from everyone, inviting you to join us in enhancing and expanding our project. 
