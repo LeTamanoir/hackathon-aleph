@@ -40,7 +40,6 @@ async function getDeployments(execAddress: `0x${string}`) {
     return !!owners[idx].find((e) => isAddressEqual(e, execAddress));
   });
 }
-
 export default function useAccount() {
   const { address: execAccount } = useWagmiAccount();
 

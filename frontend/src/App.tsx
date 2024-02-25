@@ -24,12 +24,12 @@ function App() {
 
         <Route
           path="/catalog"
-          element={<AppCatalog safuAddress={selectedSafu} />}
+          Component={() => <AppCatalog safuAddress={selectedSafu} />}
         />
 
         <Route
           path="/transactions"
-          element={<Transactions safuAddress={selectedSafu} />}
+          Component={() => <Transactions safuAddress={selectedSafu} />}
         />
       </Routes>
 

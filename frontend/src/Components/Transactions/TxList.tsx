@@ -4,7 +4,7 @@ import useProposals, { getSignatures } from "../../Hooks/useProposals";
 import useSignatures from "../../Hooks/useSignatures";
 import { Proposal } from "../../types/proposal";
 import { AlephMessage } from "../../types/aleph";
-import { LoadingIcon } from "../Icons";
+import { BinIcon, LoadingIcon } from "../Icons";
 import { useTransactionReceipt } from "wagmi";
 import { signProposal } from "../../utils/signer";
 import { useQuery } from "@tanstack/react-query";
@@ -60,7 +60,7 @@ function TxRow({
   const isTxSubmitted = data !== undefined;
 
   return (
-    <div className="bg-dark-lighter p-4 flex flex-col gap-3 rounded-lg border-dark">
+    <div className="bg-dark-lighter p-4 flex flex-col gap-2 rounded-lg border-dark">
       {isTxSubmitted && (
         <div className="flex flex-col gap-0.5 mb-2">
           {data.status === "success" ? (
@@ -105,49 +105,53 @@ function TxRow({
       </div>
 
       {!isTxSubmitted && (
-        <div className="flex gap-2 items-center">
-          {hasAlreadySigned ? (
-            <>
-              {signedTxCount === safuInfo?.threshold && (
+        <>
+          <div className="h-px w-full bg-dark/30" />
+
+          <div className="flex gap-2 items-center">
+            {hasAlreadySigned ? (
+              <>
+                {signedTxCount === safuInfo?.threshold && (
+                  <button
+                    className="px-2 py-1 text-white rounded-lg bg-blue-700 hover:bg-blue-800 transition-colors"
+                    onClick={onExec}
+                  >
+                    Exec
+                  </button>
+                )}
+                <div className="text-xs">
+                  {signedTxCount} / {safuInfo?.threshold} signatures
+                </div>
+
                 <button
-                  className="px-2 py-1 text-white rounded-lg bg-blue-700 hover:bg-blue-800 transition-colors"
-                  onClick={onExec}
+                  className="px-1.5 py-0.5 text-sm flex gap-1 items-center ml-auto border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
+                  onClick={onDeleteSignature}
                 >
-                  Exec
+                  <BinIcon className="size-4" /> delete signature
                 </button>
-              )}
-              <div className="text-xs">
-                {signedTxCount} / {safuInfo?.threshold} signatures
-              </div>
+              </>
+            ) : (
+              <>
+                <button
+                  className="px-2 py-1 text-white rounded-lg bg-dark-light hover:bg-dark/90 transition-colors"
+                  onClick={onSign}
+                >
+                  Sign
+                </button>
+                <div className="text-xs mr-auto">
+                  {signedTxCount} / {safuInfo?.threshold} signatures
+                </div>
+              </>
+            )}
 
-              <button
-                className="px-1.5 py-0.5 text-sm ml-auto border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
-                onClick={onDeleteSignature}
-              >
-                Delete signature
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className="px-2 py-1 text-white rounded-lg bg-dark-light hover:bg-dark/90 transition-colors"
-                onClick={onSign}
-              >
-                Sign
-              </button>
-              <div className="text-xs mr-auto">
-                {signedTxCount} / {safuInfo?.threshold} signatures
-              </div>
-            </>
-          )}
-
-          <button
-            className="px-1.5 py-0.5 text-sm border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
-            onClick={onDelete}
-          >
-            Delete proposal
-          </button>
-        </div>
+            <button
+              className="px-1.5 py-0.5 flex gap-1 items-center text-sm border text-red-600 hover:bg-red-100 transition-colors border-red-500 rounded-lg bg-red-50"
+              onClick={onDelete}
+            >
+              <BinIcon className="size-4" /> delete proposal
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

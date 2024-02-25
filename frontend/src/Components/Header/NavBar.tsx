@@ -47,9 +47,12 @@ export default function Navbar({
       <select
         className="ml-6 px-2 py-1 w-44 rounded-lg bg-dark-light text-white truncate focus:outline-none"
         value={selectedSafu ?? "none"}
-        onChange={(e) => setSelectedSafu(e.target.value as `0x${string}`)}
+        onChange={(e) =>
+          e.target.value !== "nonce" &&
+          setSelectedSafu(e.target.value as `0x${string}`)
+        }
       >
-        <option value={"none"}>Select a SAFU</option>
+        <option value="none">Select a SAFU</option>
         {availableSafuWallets?.map((safu) => (
           <option key={safu} value={safu}>
             {safu}

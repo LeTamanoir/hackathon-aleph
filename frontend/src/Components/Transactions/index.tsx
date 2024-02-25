@@ -12,6 +12,8 @@ export default function Transactions({
 
   const { account } = useAccount();
 
+  console.log("walletClient", walletClient,safuAddress);
+
   if (!walletClient || !account || !safuAddress) {
     return <ConnectWallet />;
   }
