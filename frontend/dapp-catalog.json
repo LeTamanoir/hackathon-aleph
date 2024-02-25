@@ -3,6 +3,6 @@
     "icon": "https://aleph.im/apple-touch-icon.png",
     "name": "ETH-Aleph dApp",
     "description": "Send data from Ethereum to Aleph.im.",
-    "url": "http://localhost:3000/"
+    "url": "https://hackathon-aleph-demo-app.vercel.app/"
   }
 ]
