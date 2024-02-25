@@ -1,76 +1,193 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlephMessage } from "../types/aleph";
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
 import { ApiServer, ID } from "../config";
-import { post } from "aleph-sdk-ts/dist/messages";
+import { post, forget } from "aleph-sdk-ts/dist/messages";
 import { Proposal } from "../types/proposal";
+import { getSafeInfo } from "../Components/AppCatalog/safe";
+import { wait } from "../utils";
 
-async function getProposals({
-  address,
+async function _getProposals({
+  safuAddress,
 }: {
-  address: string;
-}): Promise<AlephMessage[]> {
-  return post
-    .Get({
-      channels: [`${ID}/multisig/${address}/proposals`],
-      types: "proposals",
+  safuAddress: `0x${string}`;
+}): Promise<AlephMessage<Proposal>[]> {
+  const proposals = (
+    await post.Get({
+      channels: [`${ID}/multisig/${safuAddress}/proposals`],
+      types: "proposal",
       APIServer: ApiServer,
     })
-    .then((res) => res.posts as AlephMessage[]);
-}
+  ).posts as AlephMessage<Proposal>[];
 
-function createProposal({
-  proposal,
-  safe,
-}: {
-  proposal: Proposal;
-  safe: ETHAccount;
-}) {
-  return post.Publish({
-    account: safe,
-    postType: "proposals",
-    content: { body: proposal },
-    channel: `${ID}/multisig/${safe.address}/proposals`,
+  const { owners } = await getSafeInfo(safuAddress);
+
+  return proposals.filter((proposal) => {
+    return owners.includes(proposal.sender);
   });
 }
 
-function createSignature({
+function _deleteProposal({
+  message,
+  safuAddress,
+  account,
+}: {
+  safuAddress: `0x${string}`;
+  account: ETHAccount;
+  message: AlephMessage<Proposal>;
+}) {
+  return forget.Publish({
+    account,
+    hashes: [message.item_hash],
+    channel: `${ID}/multisig/${safuAddress}/proposals`,
+  });
+}
+
+export async function getSignatures({
+  proposal,
+  safuAddress,
+}: {
+  proposal: Proposal;
+  safuAddress: `0x${string}`;
+}): Promise<AlephMessage<Proposal>[]> {
+  const signatures = (
+    await post.Get({
+      channels: [`${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`],
+      types: "signature",
+      APIServer: ApiServer,
+    })
+  ).posts as AlephMessage<Proposal>[];
+
+  const { owners } = await getSafeInfo(safuAddress);
+
+  return signatures.filter((signature) => {
+    return owners.includes(signature.sender);
+  });
+}
+
+function _updateProposal({
+  proposal,
+  safuAddress,
+  message,
+  account,
+}: {
+  proposal: Proposal;
+  safuAddress: `0x${string}`;
+  message: AlephMessage<Proposal>;
+  account: ETHAccount;
+}) {
+  return post.Publish({
+    account,
+    postType: "amend",
+    ref: message.item_hash,
+    content: { body: proposal },
+    channel: `${ID}/multisig/${safuAddress}/proposals`,
+  });
+}
+
+function _createProposal({
+  proposal,
+  safuAddress,
+  account,
+}: {
+  proposal: Proposal;
+  safuAddress: `0x${string}`;
+  account: ETHAccount;
+}) {
+  return post.Publish({
+    account,
+    postType: "proposal",
+    content: { body: proposal },
+    channel: `${ID}/multisig/${safuAddress}/proposals`,
+  });
+}
+
+function _createSignature({
   proposal,
   signature,
-  safe,
+  safuAddress,
+  account,
 }: {
   proposal: Proposal;
   signature: `0x${string}`;
-  safe: ETHAccount;
+  safuAddress: `0x${string}`;
+  account: ETHAccount;
 }) {
   return post.Publish({
-    account: safe,
-    postType: "proposalSignatures",
+    account,
+    postType: "signature",
     content: { body: signature },
-    channel: `${ID}/multisig/${safe.address}/proposal/${proposal.tx_hash}`,
+    channel: `${ID}/multisig/${safuAddress}/proposal/${proposal.tx_hash}`,
   });
 }
 
-export default function useProposals(safe: ETHAccount) {
-  const { data: proposals, isFetching } = useQuery({
-    queryKey: ["proposals", safe.address],
-    queryFn: () => getProposals({ address: safe.address }),
+export default function useProposals({
+  safuAddress,
+}: {
+  safuAddress: `0x${string}`;
+}) {
+  const queryClient = useQueryClient();
+
+  const { data: proposals } = useQuery({
+    queryKey: ["proposals", safuAddress],
+    queryFn: () => _getProposals({ safuAddress }),
   });
 
-  const { mutateAsync: uploadProposal, isPending } = useMutation({
-    mutationKey: ["proposals", safe.address],
-    mutationFn: (body: { proposal: Proposal; safe: ETHAccount }) =>
-      createProposal(body),
+  const { mutateAsync: deleteProposal } = useMutation({
+    mutationFn: (body: {
+      message: AlephMessage<Proposal>;
+      account: ETHAccount;
+      safuAddress: `0x${string}`;
+    }) => _deleteProposal(body),
+    onSuccess: async () => {
+      await wait(500);
+      queryClient.invalidateQueries({ queryKey: ["proposals", safuAddress] });
+    },
+  });
+
+  const { mutateAsync: uploadProposal } = useMutation({
+    mutationFn: (body: {
+      proposal: Proposal;
+      account: ETHAccount;
+      safuAddress: `0x${string}`;
+    }) => _createProposal(body),
+    onSuccess: async () => {
+      await wait(500);
+      queryClient.invalidateQueries({ queryKey: ["proposals", safuAddress] });
+    },
   });
 
   const { mutateAsync: uploadSignature } = useMutation({
-    mutationKey: ["signatures", safe.address],
     mutationFn: (body: {
       proposal: Proposal;
       signature: `0x${string}`;
-      safe: ETHAccount;
-    }) => createSignature(body),
+      account: ETHAccount;
+      safuAddress: `0x${string}`;
+    }) => _createSignature(body),
+    onSuccess: async () => {
+      await wait(500);
+      queryClient.invalidateQueries({ queryKey: ["signatures", safuAddress] });
+    },
   });
 
-  return { uploadProposal, uploadSignature, proposals, isFetching, isPending };
+  const { mutateAsync: updateProposal } = useMutation({
+    mutationFn: (body: {
+      proposal: Proposal;
+      safuAddress: `0x${string}`;
+      message: AlephMessage<Proposal>;
+      account: ETHAccount;
+    }) => _updateProposal(body),
+    onSuccess: async () => {
+      await wait(500);
+      queryClient.invalidateQueries({ queryKey: ["proposals", safuAddress] });
+    },
+  });
+
+  return {
+    uploadProposal,
+    updateProposal,
+    deleteProposal,
+    uploadSignature,
+    proposals,
+  };
 }

@@ -1,10 +1,10 @@
-import DappCatalog from "./Components/DappCatalog";
+import AppCatalog from "./Components/AppCatalog";
 import Navbar from "./Components/Header/NavBar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Transactions from "./Components/Transactions";
 
 function App() {
-  const multisigAddress = "0x4EF0ef5aC60ae6117AF59A5ea1F90Ad2e6ce093e";
+  const safuAddress = "0xA7a5575BC169d9E96aF32DdE565fa7e9E2e1d171";
 
   return (
     <BrowserRouter>
@@ -15,12 +15,12 @@ function App() {
 
         <Route
           path="/catalog"
-          Component={() => <DappCatalog multisigAddress={multisigAddress} />}
+          Component={() => <AppCatalog safuAddress={safuAddress} />}
         />
 
         <Route
           path="/transactions"
-          Component={() => <Transactions multisigAddress={multisigAddress} />}
+          Component={() => <Transactions safuAddress={safuAddress} />}
         />
       </Routes>
     </BrowserRouter>

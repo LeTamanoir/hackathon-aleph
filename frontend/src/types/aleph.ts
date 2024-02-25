@@ -1,11 +1,11 @@
-export interface AlephMessage {
+export interface AlephMessage<T> {
   chain: string;
   item_hash: string;
   sender: string;
   type: string;
   channel: string;
   confirmed: boolean;
-  content: { body: Record<string, unknown> };
+  content: { body: T };
   item_content: string;
   item_type: string;
   signature: string;

@@ -4,27 +4,28 @@ import { Application } from "../../types/application";
 import Browser from "./Browser";
 import { useWalletClient } from "wagmi";
 import useAccount from "../../Hooks/useAccount";
+import ConnectWallet from "../ConnectWallet";
 
-export default function DappCatalog({
-  multisigAddress,
+export default function AppCatalog({
+  safuAddress,
 }: {
-  multisigAddress: `0x${string}`;
+  safuAddress: `0x${string}`;
 }) {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
   const { data: walletClient } = useWalletClient();
 
-  const { ethAccount } = useAccount();
+  const { account } = useAccount();
 
-  if (!walletClient || !ethAccount) {
-    return <div>Connect your wallet</div>;
+  if (!walletClient || !account) {
+    return <ConnectWallet />;
   }
 
-  if (selectedApp && walletClient && ethAccount) {
+  if (selectedApp && walletClient && account) {
     return (
       <Browser
-        ethAccount={ethAccount}
-        multisigAddress={multisigAddress}
+        account={account}
+        safuAddress={safuAddress}
         walletClient={walletClient}
         app={selectedApp}
       />
@@ -34,7 +35,7 @@ export default function DappCatalog({
   return (
     <div className="flex grow flex-col gap-10 my-10 px-28">
       <header>
-        <h2 className="text-white font-neue text-2xl">Dapp catalog</h2>
+        <h2 className="text-white font-neue text-2xl">App catalog</h2>
         <p className="text-white">
           Browse the list of available applications and interact with them using
           your SAFU wallet.

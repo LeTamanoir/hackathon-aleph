@@ -7,58 +7,70 @@ import { Transaction } from "../../types/transaction";
 const publicClient = getPublicClient(config);
 
 export async function getSafeInfo(
-  multisigAddress: `0x${string}`
+  safuAddress: `0x${string}`
 ): Promise<SafeInfo> {
   const owners = await publicClient.readContract({
     abi: parseAbi(["function getOwners() public view returns (address[])"]),
     functionName: "getOwners",
-    address: multisigAddress,
+    address: safuAddress,
   });
 
   const threshold = await publicClient.readContract({
     abi: parseAbi(["function getThreshold() public view returns (uint256)"]),
     functionName: "getThreshold",
-    address: multisigAddress,
+    address: safuAddress,
   });
 
   return {
     chainId: publicClient.chain.id,
     isReadOnly: false,
-    safeAddress: multisigAddress,
+    safeAddress: safuAddress,
     owners: owners as string[],
     threshold: Number(threshold),
   };
 }
 
-export async function signProposal({
-  multisigAddress,
-  proposerAddress,
-  tx,
-  walletClient,
-}: {
-  proposerAddress: `0x${string}`;
-  multisigAddress: `0x${string}`;
-  walletClient: WalletClient;
-  tx: Record<string, string>;
-}) {
-  const transaction: Transaction = {
+export async function parseRawTransaction(
+  safuAddress: `0x${string}`,
+  tx: Record<string, string>
+): Promise<Transaction> {
+  const nonce = await publicClient.readContract({
+    abi: parseAbi(["function nonce() public view returns (uint256)"]),
+    functionName: "nonce",
+    address: safuAddress,
+  });
+
+  return {
     to: (tx["to"] as `0x${string}`) ?? zeroAddress,
     value: BigInt(tx["value"] ?? "0"),
     data: tx["data"] as `0x${string}`,
-    operation: Number(tx["operation"] ?? "0"),
+    operation: Number(tx["operation"] ?? "1"),
     safeTxGas: BigInt(tx["safeTxGas"] ?? "0"),
     baseGas: BigInt(tx["baseGas"] ?? "0"),
     gasPrice: BigInt(tx["gasPrice"] ?? "0"),
     gasToken: (tx["gasToken"] as `0x${string}`) ?? zeroAddress,
     refundReceiver: (tx["refundReceiver"] as `0x${string}`) ?? zeroAddress,
-    nonce: BigInt(tx["nonce"] ?? "0"),
+    nonce: BigInt(tx["nonce"] ?? nonce),
   };
+}
 
+export async function signProposal({
+  safuAddress,
+  proposerAddress,
+  transaction,
+  walletClient,
+}: {
+  proposerAddress: `0x${string}`;
+  safuAddress: `0x${string}`;
+  walletClient: WalletClient;
+  transaction: Transaction;
+}) {
   const tx_hash = await publicClient.readContract({
     abi: parseAbi([
-      "function getTransactionHash(address to, uint256 value, bytes calldata data, uint8 operation, uint256 safeTxGas, uint256 baseGas, uint256 gasPrice, address gasToken, address refundReceiver, uint256 _nonce) public view returns (bytes32)",
+      "function getTransactionHash(address to, uint256 value, bytes data, uint8 operation, uint256 safeTxGas, uint256 baseGas, uint256 gasPrice, address gasToken, address refundReceiver, uint256 nonce) public view returns (bytes32)",
     ]),
     functionName: "getTransactionHash",
+    address: safuAddress,
     args: [
       transaction.to,
       transaction.value,
@@ -71,13 +83,16 @@ export async function signProposal({
       transaction.refundReceiver,
       transaction.nonce,
     ],
-    address: multisigAddress,
   });
 
-  const signature = await walletClient.signMessage({
+  const raw_signature = await walletClient.signMessage({
     account: proposerAddress,
-    message: tx_hash,
+    message: { raw: tx_hash },
   });
 
-  return { signature, tx_hash, transaction };
+  const signature = raw_signature
+    .replace(/1c$/, "20")
+    .replace(/1b$/, "1f") as `0x${string}`;
+
+  return { signature, tx_hash };
 }

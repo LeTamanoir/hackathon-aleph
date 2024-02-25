@@ -3,7 +3,7 @@ import { Application } from "../../types/application";
 import { Methods } from "@safe-global/safe-apps-sdk";
 import { WalletClient, zeroHash } from "viem";
 import Transport from "./Transport";
-import { getSafeInfo, signProposal } from "./safe";
+import { getSafeInfo, parseRawTransaction, signProposal } from "./safe";
 import { LoadingIcon } from "../Icons";
 import useProposals from "../../Hooks/useProposals";
 import { ETHAccount } from "aleph-sdk-ts/dist/accounts/ethereum";
@@ -11,14 +11,14 @@ import { Proposal } from "../../types/proposal";
 import AlephIcon from "../Header/AlephIcon";
 
 export default function Browser({
-  multisigAddress,
+  safuAddress,
   walletClient,
-  ethAccount,
+  account,
   app,
 }: {
-  multisigAddress: `0x${string}`;
+  safuAddress: `0x${string}`;
   walletClient: WalletClient;
-  ethAccount: ETHAccount;
+  account: ETHAccount;
   app: Application;
 }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,45 +28,39 @@ export default function Browser({
     "initial" | "sign_proposal" | "upload_proposal" | "upload_signature"
   >("initial");
 
-  const { uploadProposal, uploadSignature } = useProposals(ethAccount);
+  const { uploadProposal, uploadSignature } = useProposals({ safuAddress });
 
   useEffect(() => {
     const transport = new Transport(ref);
 
     transport.on(Methods.getSafeInfo, async () => {
-      return await getSafeInfo(multisigAddress);
+      return await getSafeInfo(safuAddress);
     });
 
     transport.on(Methods.sendTransactions, async (msg) => {
       const tx = (msg.data.params as any).txs[0];
 
       try {
-        // setError(undefined);
         setStatus("sign_proposal");
 
-        const { signature, tx_hash, transaction } = await signProposal({
+        const transaction = await parseRawTransaction(safuAddress, tx);
+
+        const { signature, tx_hash } = await signProposal({
           proposerAddress: walletClient.account?.address!,
-          multisigAddress,
+          safuAddress,
           walletClient,
-          tx,
+          transaction,
         });
 
         const proposal: Proposal = { tx_hash, transaction };
 
         setStatus("upload_proposal");
 
-        await uploadProposal({
-          proposal,
-          safe: ethAccount,
-        });
+        await uploadProposal({ proposal, account, safuAddress });
 
         setStatus("upload_signature");
 
-        await uploadSignature({
-          proposal,
-          signature,
-          safe: ethAccount,
-        });
+        await uploadSignature({ proposal, signature, account, safuAddress });
       } finally {
         setStatus("initial");
       }
@@ -87,7 +81,7 @@ export default function Browser({
     transport.on(Methods.requestAddressBook, () => void 0);
 
     return () => transport.clear();
-  }, [multisigAddress]);
+  }, [safuAddress]);
 
   return (
     <div className="w-full flex grow p-2 bg-dark relative">

@@ -1,18 +1,19 @@
 import { useWalletClient } from "wagmi";
 import useAccount from "../../Hooks/useAccount";
 import TxList from "./TxList";
+import ConnectWallet from "../ConnectWallet";
 
 export default function Transactions({
-  multisigAddress,
+  safuAddress,
 }: {
-  multisigAddress: `0x${string}`;
+  safuAddress: `0x${string}`;
 }) {
   const { data: walletClient } = useWalletClient();
 
-  const { ethAccount } = useAccount();
+  const { account } = useAccount();
 
-  if (!walletClient || !ethAccount) {
-    return <div>Connect your wallet</div>;
+  if (!walletClient || !account) {
+    return <ConnectWallet />;
   }
 
   return (
@@ -25,10 +26,10 @@ export default function Transactions({
         </p>
       </header>
 
-      {walletClient && ethAccount && (
+      {walletClient && account && (
         <TxList
-          ethAccount={ethAccount}
-          multisigAddress={multisigAddress}
+          account={account}
+          safuAddress={safuAddress}
           walletClient={walletClient}
         />
       )}
