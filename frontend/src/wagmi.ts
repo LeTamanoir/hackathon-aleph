@@ -6,9 +6,7 @@ export const config = createConfig({
   chains: [sepolia],
   connectors: [injected()],
   transports: {
-    [sepolia.id]: http(
-      "https://sepolia.infura.io/v3/3e52871716db4e138a89863489b59c63"
-    ),
+    [sepolia.id]: http(),
   },
 });
 
