@@ -191,13 +191,15 @@ export default function TxList({
   async function onExecTransaction(message: AlephMessage<Proposal>) {
     const proposal = message.content.body;
 
-    const signatures = (await getSignatures({ proposal, safuAddress })).map(
-      (e) => e.content.body
-    );
+    const signatures = await getSignatures({ proposal, safuAddress });
 
-    const sortedSignatures = signatures.sort(
-      (a, b) => Number(hexToBigInt(b)) - Number(hexToBigInt(a))
-    );
+    const sortedSignatures = signatures
+      .sort(
+        (a, b) =>
+          Number(hexToBigInt(a.sender as `0x${string}`)) -
+          Number(hexToBigInt(b.sender as `0x${string}`))
+      )
+      .map((e) => e.content.body);
 
     const tx_hash = await walletClient.writeContract({
       abi: parseAbi([
